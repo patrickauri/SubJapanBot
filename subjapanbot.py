@@ -1,10 +1,10 @@
 import discord
-# from discord.ext import commands
+import gettoken
 
-token = "Njk2NzcwMDM3OTQ3Njk1MTA0.Xotjxg.GbZmCe9KVeD8h4LZAUK2WgDeAYI"
+token = gettoken.getToken()
 
-# client = commands.Bot(command_prefix='.')
 client = discord.Client()
+errorMsg = 'En feil har oppstått. Kontakt administrator! エラーが発生しまいました！管理人を連絡してください！'
 
 
 @client.event
@@ -19,37 +19,49 @@ async def on_message(message):
         if message.content.startswith('.n1'):
             role_name = "Norsk Nybegynner - ノルウェー語初心者"
         if message.content.startswith('.n2'):
-            role_name = "Norsk Viderekommen - ノルウェー語中級者"
+            role_name = "Norsk Mellomnivå - ノルウェー語中級者"
         if message.content.startswith('.n3'):
             role_name = "Norsk Flytende - ノルウェー語流暢"
-        if message.content.startswith('.nn'):
+        if message.content.startswith('.n4'):
             role_name = "Norsk Morsmål - ノルウェー語話者"
         if message.content.startswith('.j1'):
             role_name = "Japansk Nybegynner - 日本語初心者"
         if message.content.startswith('.j2'):
-            role_name = "Japansk Viderekommen - 日本語中級者"
+            role_name = "Japansk Mellomnivå - 日本語中級者"
         if message.content.startswith('.j3'):
             role_name = "Japansk Flytende - 日本語流暢"
-        if message.content.startswith('.jn'):
+        if message.content.startswith('.j4'):
             role_name = "Japansk Morsmål - 日本語話者"
         if message.content.startswith('.test'):
             role_name = "Test"
         if role_name is not None:
             role = discord.utils.get(
                 message.guild.roles, name=role_name)
-
-            try:
-                print(f'Adding role {role} ({role_name}) to {message.author}')
-                await message.author.add_roles(role)
-                await message.channel.send(f'Du har fått rollen ( {role} )というロールを付けました。')
-            except:
-                await message.channel.send(
-                    'En feil har oppstått. Kontakt administrator! エラーが発生しまいました！管理人を連絡してください！')
-        if message.content.startswith('.tasukete'):
-            await message.channel.send('Hjelp')
-    else:
-        # client.send_message(message.channel, 'Denne rollen finnes ikke')
-        await message.channel.send('Denne rollen finnes ikke! Skriv .tasukete for hjelp. このロールは存在していません。ヘルプを表示するには .tasukete')
+            if role in message.author.roles:
+                try:
+                    print(f"Removing role {role} from {message.author}")
+                    await message.author.remove_roles(role)
+                    await message.channel.send(f"Fjernet rollen: ( {role} )というロールを消しました。")
+                except:
+                    await message.channel.send(errorMsg)
+            else:
+                try:
+                    print(
+                        f'Adding role {role} to {message.author}')
+                    await message.author.add_roles(role)
+                    await message.channel.send(f"Du har fått rollen ( {role} )というロールを付けました。")
+                except:
+                    await message.channel.send(errorMsg)
+        else:
+            if message.content.startswith('.tasukete'):
+                title = "Skriv . etterfulgt av en rolle for å få rollen. 欲しいロールを．の後に付けたらロールを貰えます"
+                subtitle1 = "Norsk ノルウェー語"
+                subtitle2 = "Japansk 日本語"
+                norsk = ".n1 -> Norsk Nybegynner - ノルウェー語初心者\n.n2 -> Norsk Mellomnivå - ノルウェー語中級者\n.n3 -> Norsk Flytende - ノルウェー語流暢\n.n4 -> Norsk Morsmål - ノルウェー語話者"
+                japansk = ".j1 -> Japansk Nybegynner - 日本語初心者\n.j2 -> Japansk Mellomnivå - 日本語中級者\n.j3 -> Japansk Flytende - 日本語流暢\n.j4 -> Japansk Morsmål - 日本語話者"
+                await message.channel.send(f"** {title} ** \n *{subtitle1}* ```{norsk}``` *{subtitle2}* ```{japansk}```")
+            else:
+                await message.channel.send('Skriv .tasukete for hjelp. ヘルプを表示するには .tasukete')
 
 
 client.run(token)
