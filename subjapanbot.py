@@ -16,6 +16,7 @@ async def on_ready():
 async def on_message(message):
     if message.content.startswith('.'):
         role_name = None
+        # NORSK
         if message.content.startswith('.n1'):
             role_name = "Norsk Nybegynner - ノルウェー語初心者"
         if message.content.startswith('.n2'):
@@ -24,6 +25,7 @@ async def on_message(message):
             role_name = "Norsk Flytende - ノルウェー語流暢"
         if message.content.startswith('.n4'):
             role_name = "Norsk Morsmål - ノルウェー語話者"
+        # JAPANSK
         if message.content.startswith('.j1'):
             role_name = "Japansk Nybegynner - 日本語初心者"
         if message.content.startswith('.j2'):
@@ -32,8 +34,15 @@ async def on_message(message):
             role_name = "Japansk Flytende - 日本語流暢"
         if message.content.startswith('.j4'):
             role_name = "Japansk Morsmål - 日本語話者"
-        if message.content.startswith('.test'):
-            role_name = "Test"
+        # ENGELSK
+        if message.content.startswith('.e1'):
+            role_name = "Engelsk Nybegynner - 英語初心者"
+        if message.content.startswith('.e2'):
+            role_name = "Engelsk Mellomnivå - 英語中級者"
+        if message.content.startswith('.e3'):
+            role_name = "Engelsk Flytende - 英語流暢"
+        if message.content.startswith('.e4'):
+            role_name = "Engelsk Morsmål - 英語話者"
         if role_name is not None:
             role = discord.utils.get(
                 message.guild.roles, name=role_name)
