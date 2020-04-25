@@ -42,7 +42,7 @@ async def on_message(message):
         if message.content.startswith('.e3'):
             role_name = "Engelsk Flytende - 英語流暢"
         if message.content.startswith('.e4'):
-            role_name = "Japansk Morsmål - 日本語話者"
+            role_name = "Engelsk Morsmål - 英語話者"
         if role_name is not None:
             role = discord.utils.get(
                 message.guild.roles, name=role_name)
