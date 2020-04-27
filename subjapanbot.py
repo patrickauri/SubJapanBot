@@ -70,7 +70,7 @@ async def on_message(message):
                 norsk = ".n1 -> Norsk Nybegynner - ノルウェー語初心者\n.n2 -> Norsk Mellomnivå - ノルウェー語中級者\n.n3 -> Norsk Flytende - ノルウェー語流暢\n.n4 -> Norsk Morsmål - ノルウェー語話者"
                 japansk = ".j1 -> Japansk Nybegynner - 日本語初心者\n.j2 -> Japansk Mellomnivå - 日本語中級者\n.j3 -> Japansk Flytende - 日本語流暢\n.j4 -> Japansk Morsmål - 日本語話者"
                 engelsk = ".e1 -> Engelsk Nybegynner - 英語初心者\n.e2 -> Engelsk Mellomnivå - 英語中級者\n.e3 -> Engelsk Flytende - 英語流暢\n.e4 -> Engelsk Morsmål - 英語話者"
-                await message.channel.send(f"** {title} ** \n *{subtitle1}* ```{norsk}``` *{subtitle2}* ```{japansk}```")
+                await message.channel.send(f"** {title} ** \n *{subtitle1}* ```{norsk}``` *{subtitle2}* ```{japansk}``` *{subtitle3}* ```{engelsk}```")
             else:
                 await message.channel.send('Skriv .tasukete for hjelp. ヘルプを表示するには .tasukete')
 
