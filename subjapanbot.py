@@ -13,6 +13,17 @@ async def on_ready():
 
 
 @client.event
+async def on_member_join(member):
+    channelid = 696733496592564294
+    jikoshokai_id = 705063473364729926
+    jikoshokai = client.get_channel(jikoshokai_id)
+    channel = client.get_channel(channelid)
+    mentionstr = member.mention
+    msg = (f"A wild {mentionstr} has appeared! Gjerne introduser deg i {jikoshokai.mention} - 野生の{mentionstr}が現れた！是非 {jikoshokai.mention} で自己紹介してね")
+    await channel.send(msg)
+
+
+@client.event
 async def on_message(message):
     if message.content.startswith('.'):
         role_name = None
@@ -25,6 +36,8 @@ async def on_message(message):
             role_name = "Norsk Flytende - ノルウェー語流暢"
         if message.content.startswith('.n4'):
             role_name = "Norsk Morsmål - ノルウェー語話者"
+        if message.content.startswith('.nh'):
+            role_name = "Norsk-Hjelp ノルウェー語助手"
         # JAPANSK
         if message.content.startswith('.j1'):
             role_name = "Japansk Nybegynner - 日本語初心者"
@@ -34,6 +47,8 @@ async def on_message(message):
             role_name = "Japansk Flytende - 日本語流暢"
         if message.content.startswith('.j4'):
             role_name = "Japansk Morsmål - 日本語話者"
+        if message.content.startswith('.jh'):
+            role_name = "Japansk-Hjelp 日本語助手"
         # ENGELSK
         if message.content.startswith('.e1'):
             role_name = "Engelsk Nybegynner - 英語初心者"
@@ -43,6 +58,8 @@ async def on_message(message):
             role_name = "Engelsk Flytende - 英語流暢"
         if message.content.startswith('.e4'):
             role_name = "Engelsk Morsmål - 英語話者"
+        if message.content.startswith('.eh'):
+            role_name = "Engelsk-Hjelp 英語助手"
         if role_name is not None:
             role = discord.utils.get(
                 message.guild.roles, name=role_name)
