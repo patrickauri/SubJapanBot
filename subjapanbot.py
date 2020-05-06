@@ -1,7 +1,9 @@
 import discord
 import gettoken
+import os
 
-token = gettoken.getToken()
+#token = gettoken.getToken()
+token = os.environ['TOKEN']
 
 client = discord.Client()
 errorMsg = 'En feil har oppstått. Kontakt administrator! エラーが発生しまいました！管理人を連絡してください！'
