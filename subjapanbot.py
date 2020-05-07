@@ -1,16 +1,17 @@
 import discord
 import os
+import sys
+from bot_config import *
 
+bot_channel = bot_channel_id
 token = os.environ['TOKEN']
 
 client = discord.Client()
-errorMsg = 'En feil har oppstått. Kontakt administrator! エラーが発生しまいました！管理人を連絡してください！'
-
+errorMsg = 'En feil har oppstått. Kontakt administrator! エラーが発生しまいました！管理人に連絡してください！'
 
 @client.event
 async def on_ready():
     print('SubJapanBot running! as {0.user}'.format(client))
-
 
 @client.event
 async def on_member_join(member):
@@ -22,74 +23,57 @@ async def on_member_join(member):
     msg = (f"A wild {mentionstr} has appeared! Gjerne introduser deg i {jikoshokai.mention} - 野生の{mentionstr}が現れた！是非 {jikoshokai.mention} で自己紹介してね")
     await channel.send(msg)
 
-
 @client.event
 async def on_message(message):
-    if message.content.startswith('.'):
-        role_name = None
-        # NORSK
-        if message.content.startswith('.n1'):
-            role_name = "Norsk Nybegynner - ノルウェー語初心者"
-        if message.content.startswith('.n2'):
-            role_name = "Norsk Mellomnivå - ノルウェー語中級者"
-        if message.content.startswith('.n3'):
-            role_name = "Norsk Flytende - ノルウェー語流暢"
-        if message.content.startswith('.n4'):
-            role_name = "Norsk Morsmål - ノルウェー語話者"
-        if message.content.startswith('.nh'):
-            role_name = "Norsk-Hjelp ノルウェー語助手"
-        # JAPANSK
-        if message.content.startswith('.j1'):
-            role_name = "Japansk Nybegynner - 日本語初心者"
-        if message.content.startswith('.j2'):
-            role_name = "Japansk Mellomnivå - 日本語中級者"
-        if message.content.startswith('.j3'):
-            role_name = "Japansk Flytende - 日本語流暢"
-        if message.content.startswith('.j4'):
-            role_name = "Japansk Morsmål - 日本語話者"
-        if message.content.startswith('.jh'):
-            role_name = "Japansk-Hjelp 日本語助手"
-        # ENGELSK
-        if message.content.startswith('.e1'):
-            role_name = "Engelsk Nybegynner - 英語初心者"
-        if message.content.startswith('.e2'):
-            role_name = "Engelsk Mellomnivå - 英語中級者"
-        if message.content.startswith('.e3'):
-            role_name = "Engelsk Flytende - 英語流暢"
-        if message.content.startswith('.e4'):
-            role_name = "Engelsk Morsmål - 英語話者"
-        if message.content.startswith('.eh'):
-            role_name = "Engelsk-Hjelp 英語助手"
-        if role_name is not None:
-            role = discord.utils.get(
-                message.guild.roles, name=role_name)
-            if role in message.author.roles:
-                try:
-                    print(f"Removing role {role} from {message.author}")
-                    await message.author.remove_roles(role)
-                    await message.channel.send(f"Fjernet rollen: ( {role} )というロールを消しました。")
-                except:
-                    await message.channel.send(errorMsg)
+    content = message.content
+    author = message.author
+    guild = message.guild
+    channel = message.channel
+    if bot_channel == channel.id and author.id != client.user.id and content.startswith('.') and author.bot == False:
+        if content == '.tasukete':
+            await print_help(channel, guild)
+        role = None
+        for key in role_dict.keys():
+            if role_dict[key].get(content, False):
+               role = guild.get_role(role_dict[key][content]) 
+               remove_key = key 
+        if role:
+            if role in author.roles:
+                await remove_role(channel, author, role)
             else:
-                try:
-                    print(
-                        f'Adding role {role} to {message.author}')
-                    await message.author.add_roles(role)
-                    await message.channel.send(f"Du har fått rollen ( {role} )というロールを付けました。")
-                except:
-                    await message.channel.send(errorMsg)
+                if not remove_key == "Språkjelp 語学助手":
+                    for role_code in role_dict[remove_key]:
+                        await remove_role(channel, author, guild.get_role(role_dict[remove_key][role_code]), True)
+                await set_role(channel, author, role)
         else:
-            if message.content.startswith('.tasukete'):
-                title = "Skriv . etterfulgt av en rolle for å få rollen. 欲しいロールを．の後に付けたらロールを貰えます"
-                subtitle1 = "Norsk ノルウェー語"
-                subtitle2 = "Japansk 日本語"
-                subtitle3 = "Engelsk 英語"
-                norsk = ".n1 -> Norsk Nybegynner - ノルウェー語初心者\n.n2 -> Norsk Mellomnivå - ノルウェー語中級者\n.n3 -> Norsk Flytende - ノルウェー語流暢\n.n4 -> Norsk Morsmål - ノルウェー語話者"
-                japansk = ".j1 -> Japansk Nybegynner - 日本語初心者\n.j2 -> Japansk Mellomnivå - 日本語中級者\n.j3 -> Japansk Flytende - 日本語流暢\n.j4 -> Japansk Morsmål - 日本語話者"
-                engelsk = ".e1 -> Engelsk Nybegynner - 英語初心者\n.e2 -> Engelsk Mellomnivå - 英語中級者\n.e3 -> Engelsk Flytende - 英語流暢\n.e4 -> Engelsk Morsmål - 英語話者"
-                await message.channel.send(f"** {title} ** \n *{subtitle1}* ```{norsk}``` *{subtitle2}* ```{japansk}``` *{subtitle3}* ```{engelsk}```")
-            else:
-                await message.channel.send('Skriv .tasukete for hjelp. ヘルプを表示するには .tasukete')
+            await channel.send('Skriv .tasukete for hjelp. ヘルプを表示するには .tasukete')
+    
+async def set_role(channel, author, role):
+    try:
+       print(f'Adding role {role} to {author}')
+       await author.add_roles(role)
+       await channel.send(f"Du har fått rollen ( {role} )というロールを付けました。")
+    except:
+        await channel.send(errorMsg)
 
+async def remove_role(channel, author, role, silent=False):
+    try:
+        print(f"Removing role {role} from {author}")
+        await author.remove_roles(role)
+        if not silent:
+            await channel.send(f"Fjernet rollen: ( {role} )というロールを消しました。")
+    except:
+        await channel.send(errorMsg)
+
+async def print_help(channel, guild):
+    s = "**Skriv . etterfulgt av en rolle for å få rollen. 欲しいロールを．の後に付けたらロールを貰えます** \n"
+    for key in role_dict.keys():
+        s += "*" + key + "* ```"
+        for level in role_dict[key]:
+            s += level + " -> " + guild.get_role(role_dict[key][level]).name + "\n"
+        s += "```"
+    await channel.send(s)
+    
 
 client.run(token)
+
