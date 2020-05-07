@@ -1,6 +1,5 @@
 import discord
 import os
-import sys
 from bot_config import *
 
 bot_channel = bot_channel_id
